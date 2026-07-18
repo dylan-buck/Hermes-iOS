@@ -188,17 +188,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		E2F3A4B5C6D7E8F9A0B1C2D3 /* Embed App Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				D1E2F3A4B5C6D7E8F9A0B1C2 /* HermesMobileWidgets.appex in Embed App Extensions */,
-			);
-			name = "Embed App Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -605,7 +594,6 @@
 				2C0E0892137AA72D9468922E /* HermesMobile */,
 				DCAF922B1A9CC02164A1596F /* HermesMobileTests */,
 				98E0447FA802CE293966E6A4 /* HermesMobileUITests */,
-				D39F61251933889F9F6E8EEE /* HermesMobileWidgets */,
 				885E8F8307636D94085EA353 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -777,23 +765,7 @@
 			productReference = CC94FDD251C876AFDBD6305E /* HermesMobileTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		A0BF011ADBF960517B174268 /* HermesMobileWidgets */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 07A17B63B67E3F17E4F9C113 /* Build configuration list for PBXNativeTarget "HermesMobileWidgets" */;
-			buildPhases = (
-				2814BDA4E73FA86374E1E62D /* Sources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = HermesMobileWidgets;
-			packageProductDependencies = (
-			);
-			productName = HermesMobileWidgets;
-			productReference = CB1E16EC7AC1A55E87ED87EA /* HermesMobileWidgets.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
+		
 		E084E7061D97A1CB68FAED6E /* HermesMobile */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D9CFAD2A6811924773EAA436 /* Build configuration list for PBXNativeTarget "HermesMobile" */;
@@ -801,7 +773,6 @@
 				C30EAA427FABE72439E74689 /* Sources */,
 				8E5F38C741065CFEF6FF717A /* Resources */,
 				3B4045931914FF03439E2B2A /* Frameworks */,
-				E2F3A4B5C6D7E8F9A0B1C2D3 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
@@ -877,7 +848,6 @@
 				E084E7061D97A1CB68FAED6E /* HermesMobile */,
 				7B04007FC76BC95C646A4BA8 /* HermesMobileTests */,
 				F974E240959519AA0BE1D74B /* HermesMobileUITests */,
-				A0BF011ADBF960517B174268 /* HermesMobileWidgets */,
 			);
 		};
 /* End PBXProject section */
@@ -1163,7 +1133,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 99NS7KLF77;
+				DEVELOPMENT_TEAM = QEJ4X4RDNW;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = HermesMobileWidgets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1172,7 +1142,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.hermesmobile.HermesMobile.Widgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.freemancurtis.HermesMobile.Widgets;
 				PRODUCT_NAME = HermesMobileWidgets;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 6.2;
@@ -1261,7 +1231,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.hermesmobile.HermesMobile.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.freemancurtis.HermesMobile.tests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HermesMobile.app/HermesMobile";
@@ -1278,7 +1248,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 99NS7KLF77;
+				DEVELOPMENT_TEAM = QEJ4X4RDNW;
 				ENABLE_DEBUG_DYLIB_SUPPORT = YES;
 				INFOPLIST_FILE = HermesMobile/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HermesMobile;
@@ -1287,7 +1257,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.hermesmobile.HermesMobile;
+				PRODUCT_BUNDLE_IDENTIFIER = com.freemancurtis.HermesMobile;
 				PRODUCT_NAME = HermesMobile;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1304,7 +1274,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.hermesmobile.HermesMobile.uitests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.freemancurtis.HermesMobile.uitests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = HermesMobile;
@@ -1316,7 +1286,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 99NS7KLF77;
+				DEVELOPMENT_TEAM = QEJ4X4RDNW;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = HermesMobileWidgets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1325,7 +1295,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.hermesmobile.HermesMobile.Widgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.freemancurtis.HermesMobile.Widgets;
 				PRODUCT_NAME = HermesMobileWidgets;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 6.2;
@@ -1343,7 +1313,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.hermesmobile.HermesMobile.uitests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.freemancurtis.HermesMobile.uitests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = HermesMobile;
@@ -1358,7 +1328,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 99NS7KLF77;
+				DEVELOPMENT_TEAM = QEJ4X4RDNW;
 				INFOPLIST_FILE = HermesMobile/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HermesMobile;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1366,7 +1336,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.hermesmobile.HermesMobile;
+				PRODUCT_BUNDLE_IDENTIFIER = com.freemancurtis.HermesMobile;
 				PRODUCT_NAME = HermesMobile;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1383,7 +1353,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.hermesmobile.HermesMobile.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.freemancurtis.HermesMobile.tests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HermesMobile.app/HermesMobile";
@@ -1394,15 +1364,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		07A17B63B67E3F17E4F9C113 /* Build configuration list for PBXNativeTarget "HermesMobileWidgets" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				49ECA932B0044B6D5FF4BB17 /* Debug */,
-				D4CE6CF59A2A0FA086F8CC02 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
 		4A8053146615346B324A482D /* Build configuration list for PBXNativeTarget "HermesMobileTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
