@@ -128,6 +128,7 @@ class APNsClient:
         category: str | None = None,
         bundle_id: str | None = None,
         environment: str | None = None,
+        user_info: dict | None = None,
     ) -> PushResult:
         """Send a visible alert push notification."""
         topic = bundle_id or self.default_bundle_id
@@ -144,6 +145,8 @@ class APNsClient:
         if category:
             aps["category"] = category
         payload = {"aps": aps}
+        if user_info:
+            payload.update(user_info)
 
         return await self._send(url, headers, payload, device_token)
 

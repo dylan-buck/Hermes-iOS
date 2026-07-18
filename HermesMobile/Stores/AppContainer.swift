@@ -316,6 +316,7 @@ final class AppContainer {
         await talkStore.refreshReadiness()
         reconcileLiveActivities()
         updateWidgetData()
+        await chatStore.loadConversation()
     }
 
     func handleSystemLaunch() async {

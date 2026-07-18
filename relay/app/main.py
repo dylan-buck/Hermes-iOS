@@ -310,6 +310,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 body=preview,
                 bundle_id=registration.bundle_id,
                 environment=registration.push_environment,
+                user_info={
+                    "conversationId": conversation_id,
+                    "messageId": message_id,
+                },
             )
             if result == PushResult.TOKEN_INVALID:
                 registration.is_active = False
@@ -1256,6 +1260,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         payload: PushRegisterRequest,
         auth: AuthContext = Depends(get_auth_context),
         db: Session = Depends(get_db),
+        settings: Settings = Depends(get_settings),
     ) -> dict:
         if str(payload.deviceId) != auth.device.id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot register push token for another device.")
@@ -1264,7 +1269,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             db,
             device=auth.device,
             apns_token=payload.apnsToken,
-            push_environment=payload.pushEnvironment,
+            push_environment=settings.apns_environment,  # Override: use relay env, not app-reported
             bundle_id=payload.bundleId,
         )
         record_audit(
