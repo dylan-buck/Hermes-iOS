@@ -121,3 +121,40 @@ final class MockHermesClient: HermesClientProtocol {
         return responses.randomElement() ?? responses[0]
     }
 }
+
+// MARK: - Session Management (Mock)
+
+extension MockHermesClient {
+    func listSessions(limit: Int, offset: Int) async throws -> SessionListResponse {
+        let all = DemoData.sampleSessions
+        let page = Array(all.dropFirst(offset).prefix(limit))
+        return SessionListResponse(sessions: page, total: all.count)
+    }
+
+    func searchSessions(query: String) async throws -> [SessionSummary] {
+        let q = query.lowercased()
+        return DemoData.sampleSessions.filter {
+            $0.title.lowercased().contains(q) || $0.previewText.lowercased().contains(q)
+        }
+    }
+
+    func createSession(title: String) async throws -> SessionSummary {
+        SessionSummary(title: title, previewText: "New conversation", source: "ios")
+    }
+
+    func deleteSession(id: UUID) async throws {}
+
+    func archiveSession(id: UUID) async throws {}
+
+    func togglePinSession(id: UUID) async throws -> SessionSummary {
+        SessionSummary(id: id, title: "Pinned", isPinned: true)
+    }
+
+    func renameSession(id: UUID, title: String) async throws -> SessionSummary {
+        SessionSummary(id: id, title: title)
+    }
+
+    func loadConversation(id: UUID) async throws -> Conversation {
+        currentConversation ?? DemoData.sampleConversation
+    }
+}

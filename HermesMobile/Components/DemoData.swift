@@ -150,7 +150,7 @@ nonisolated enum DemoData {
         DeviceCapability(
             permissionType: .location,
             status: .authorizedWhenInUse,
-            statusDetail: "While Using • Full Accuracy"
+            statusDetail: "While Using \u{2022} Full Accuracy"
         ),
         DeviceCapability(permissionType: .health, status: .notDetermined),
         DeviceCapability(permissionType: .notifications, status: .authorized),
@@ -168,4 +168,57 @@ nonisolated enum DemoData {
         environment: AppEnvironmentPolicy.currentBuild.defaultEnvironment,
         autoConnectOnLaunch: true
     )
+
+    // MARK: - Sessions
+
+    static let sampleSessions: [SessionSummary] = {
+        let cal = Calendar.current
+        let now = Date.now
+        return [
+            SessionSummary(
+                title: "Docker compose setup",
+                previewText: "I've fixed the nginx config and updated the compose file...",
+                lastActivity: cal.date(byAdding: .minute, value: -15, to: now) ?? now,
+                source: "cli",
+                isPinned: true
+            ),
+            SessionSummary(
+                title: "Design review prep",
+                previewText: "Your 5-slide deck is ready for the 2 PM review.",
+                lastActivity: cal.date(byAdding: .hour, value: -1, to: now) ?? now,
+                source: "ios",
+                isPinned: true
+            ),
+            SessionSummary(
+                title: "Morning briefing",
+                previewText: "Good morning! Here's your schedule and priorities...",
+                lastActivity: cal.date(byAdding: .hour, value: -3, to: now) ?? now,
+                source: "hermes-ios"
+            ),
+            SessionSummary(
+                title: "Grocery list update",
+                previewText: "Added oat milk, avocados, and sourdough bread.",
+                lastActivity: cal.date(byAdding: .hour, value: -5, to: now) ?? now,
+                source: "imessage"
+            ),
+            SessionSummary(
+                title: "Smart home automations",
+                previewText: "Created evening routine: lights dim at 9 PM...",
+                lastActivity: cal.date(byAdding: .day, value: -1, to: now) ?? now,
+                source: "web"
+            ),
+            SessionSummary(
+                title: "Weekend trip planning",
+                previewText: "Found 3 great hiking trails within an hour's drive.",
+                lastActivity: cal.date(byAdding: .day, value: -1, to: now)?.addingTimeInterval(7200) ?? now,
+                source: "telegram"
+            ),
+            SessionSummary(
+                title: "Python script debugging",
+                previewText: "The issue was a missing async context manager...",
+                lastActivity: cal.date(byAdding: .day, value: -2, to: now) ?? now,
+                source: "cli"
+            ),
+        ]
+    }()
 }

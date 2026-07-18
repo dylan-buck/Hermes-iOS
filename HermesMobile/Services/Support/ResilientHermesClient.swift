@@ -64,3 +64,49 @@ final class ResilientHermesClient: HermesClientProtocol {
         try await primary.injectVoiceTranscript(voiceSessionId: voiceSessionId)
     }
 }
+
+// MARK: - Session Management
+
+extension ResilientHermesClient {
+    func listSessions(limit: Int, offset: Int) async throws -> SessionListResponse {
+        do {
+            return try await primary.listSessions(limit: limit, offset: offset)
+        } catch {
+            guard allowsFallback() else { throw error }
+            return try await fallback.listSessions(limit: limit, offset: offset)
+        }
+    }
+
+    func searchSessions(query: String) async throws -> [SessionSummary] {
+        do {
+            return try await primary.searchSessions(query: query)
+        } catch {
+            guard allowsFallback() else { throw error }
+            return try await fallback.searchSessions(query: query)
+        }
+    }
+
+    func createSession(title: String) async throws -> SessionSummary {
+        try await primary.createSession(title: title)
+    }
+
+    func deleteSession(id: UUID) async throws {
+        try await primary.deleteSession(id: id)
+    }
+
+    func archiveSession(id: UUID) async throws {
+        try await primary.archiveSession(id: id)
+    }
+
+    func togglePinSession(id: UUID) async throws -> SessionSummary {
+        try await primary.togglePinSession(id: id)
+    }
+
+    func renameSession(id: UUID, title: String) async throws -> SessionSummary {
+        try await primary.renameSession(id: id, title: title)
+    }
+
+    func loadConversation(id: UUID) async throws -> Conversation {
+        try await primary.loadConversation(id: id)
+    }
+}

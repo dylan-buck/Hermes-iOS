@@ -15,6 +15,7 @@ final class AppContainer {
     let permissionsStore: PermissionsStore
     let settingsStore: SettingsStore
     let talkStore: TalkStore
+    let sessionListStore: SessionListStore
     let sensorUploadService: SensorUploadService?
     private let apiClient: RelayAPIClient?
     private let notificationService: (any NotificationServiceProtocol)?
@@ -33,6 +34,7 @@ final class AppContainer {
         permissionsStore: PermissionsStore,
         settingsStore: SettingsStore,
         talkStore: TalkStore,
+        sessionListStore: SessionListStore,
         sensorUploadService: SensorUploadService? = nil,
         apiClient: RelayAPIClient? = nil,
         notificationService: (any NotificationServiceProtocol)? = nil
@@ -45,6 +47,7 @@ final class AppContainer {
         self.permissionsStore = permissionsStore
         self.settingsStore = settingsStore
         self.talkStore = talkStore
+        self.sessionListStore = sessionListStore
         self.sensorUploadService = sensorUploadService
         self.apiClient = apiClient
         self.notificationService = notificationService
@@ -191,11 +194,13 @@ final class AppContainer {
             )
         }
 
+        let chatStore = ChatStore(hermesClient: hermesClient, persistence: persistence)
+
         let container = AppContainer(
             sessionStore: sessionStore,
             pairingStore: runtimePairingStore,
             hostStore: hostStore,
-            chatStore: ChatStore(hermesClient: hermesClient, persistence: persistence),
+            chatStore: chatStore,
             inboxStore: InboxStore(
                 inboxService: inboxService,
                 persistence: persistence,
@@ -211,6 +216,7 @@ final class AppContainer {
             ),
             settingsStore: settingsStore,
             talkStore: TalkStore(voiceService: voiceService),
+            sessionListStore: SessionListStore(hermesClient: hermesClient, chatStore: chatStore),
             sensorUploadService: sensorUploadService,
             apiClient: apiClient,
             notificationService: notificationService
@@ -335,6 +341,7 @@ final class AppContainer {
         isInitialized = false
         chatStore.reset()
         inboxStore.reset()
+        sessionListStore.reset()
         await initialize()
 
         // Start sensor data pipeline
@@ -611,6 +618,7 @@ final class AppContainer {
         router.resetAll()
         chatStore.reset()
         inboxStore.reset()
+        sessionListStore.reset()
         hostStore.reset()
         lastKnownHostOnline = false
         lastCommandCatalogRefreshAt = nil

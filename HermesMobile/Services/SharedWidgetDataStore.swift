@@ -12,7 +12,7 @@ enum SharedWidgetDataStore {
         if let custom = Bundle.main.object(forInfoDictionaryKey: "APP_GROUP_ID") as? String, !custom.isEmpty {
             return custom
         }
-        return "group.com.freemancurtis.HermesMobile"
+        return "group.com.freemancurtis.HermesMobileApp"
     }()
     private static let dataKey = "hermes.widget.data"
 

@@ -513,3 +513,162 @@ final class LiveHermesClient: HermesClientProtocol {
         }
     }
 }
+
+// MARK: - Session Management
+
+extension LiveHermesClient {
+    private struct SessionListAPIResponse: Decodable {
+        let sessions: [SessionAPIEntry]
+        let total: Int
+    }
+
+    private struct SessionAPIEntry: Decodable {
+        let id: UUID
+        let title: String
+        let previewText: String?
+        let updatedAt: Date?
+        let source: String?
+        let isPinned: Bool?
+        let isArchived: Bool?
+    }
+
+    private struct SessionAPIResponse: Decodable {
+        let session: SessionAPIEntry
+    }
+
+    func listSessions(limit: Int, offset: Int) async throws -> SessionListResponse {
+        let response: SessionListAPIResponse = try await performAuthorizedRequest { [self] token in
+            try await self.apiClient.get(
+                path: "sessions?limit=\(limit)&offset=\(offset)",
+                accessToken: token
+            )
+        }
+        let sessions = response.sessions.map { entry in
+            SessionSummary(
+                id: entry.id,
+                title: entry.title,
+                previewText: entry.previewText ?? "",
+                lastActivity: entry.updatedAt ?? .now,
+                source: entry.source,
+                isPinned: entry.isPinned ?? false,
+                isArchived: entry.isArchived ?? false
+            )
+        }
+        return SessionListResponse(sessions: sessions, total: response.total)
+    }
+
+    func searchSessions(query: String) async throws -> [SessionSummary] {
+        let encoded = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query
+        let response: SessionListAPIResponse = try await performAuthorizedRequest { [self] token in
+            try await self.apiClient.get(
+                path: "sessions/search?q=\(encoded)",
+                accessToken: token
+            )
+        }
+        return response.sessions.map { entry in
+            SessionSummary(
+                id: entry.id,
+                title: entry.title,
+                previewText: entry.previewText ?? "",
+                lastActivity: entry.updatedAt ?? .now,
+                source: entry.source,
+                isPinned: entry.isPinned ?? false,
+                isArchived: entry.isArchived ?? false
+            )
+        }
+    }
+
+    func createSession(title: String) async throws -> SessionSummary {
+        struct CreateSessionBody: Encodable { let title: String }
+        let response: SessionAPIResponse = try await performAuthorizedRequest { [self] token in
+            try await self.apiClient.post(
+                path: "sessions",
+                body: CreateSessionBody(title: title),
+                accessToken: token
+            )
+        }
+        let entry = response.session
+        return SessionSummary(
+            id: entry.id,
+            title: entry.title,
+            previewText: entry.previewText ?? "",
+            lastActivity: entry.updatedAt ?? .now,
+            source: entry.source,
+            isPinned: entry.isPinned ?? false,
+            isArchived: entry.isArchived ?? false
+        )
+    }
+
+    func deleteSession(id: UUID) async throws {
+        struct EmptyResponse: Decodable {}
+        let _: EmptyResponse = try await performAuthorizedRequest { [self] token in
+            try await self.apiClient.delete(
+                path: "sessions/\(id.uuidString.lowercased())",
+                accessToken: token
+            )
+        }
+    }
+
+    func archiveSession(id: UUID) async throws {
+        struct EmptyResponse: Decodable {}
+        let _: EmptyResponse = try await performAuthorizedRequest { [self] token in
+            try await self.apiClient.post(
+                path: "sessions/\(id.uuidString.lowercased())/archive",
+                accessToken: token
+            )
+        }
+    }
+
+    func togglePinSession(id: UUID) async throws -> SessionSummary {
+        let response: SessionAPIResponse = try await performAuthorizedRequest { [self] token in
+            try await self.apiClient.post(
+                path: "sessions/\(id.uuidString.lowercased())/pin",
+                accessToken: token
+            )
+        }
+        let entry = response.session
+        return SessionSummary(
+            id: entry.id,
+            title: entry.title,
+            previewText: entry.previewText ?? "",
+            lastActivity: entry.updatedAt ?? .now,
+            source: entry.source,
+            isPinned: entry.isPinned ?? false,
+            isArchived: entry.isArchived ?? false
+        )
+    }
+
+    func renameSession(id: UUID, title: String) async throws -> SessionSummary {
+        struct RenameBody: Encodable { let title: String }
+        let response: SessionAPIResponse = try await performAuthorizedRequest { [self] token in
+            try await self.apiClient.patch(
+                path: "sessions/\(id.uuidString.lowercased())",
+                body: RenameBody(title: title),
+                accessToken: token
+            )
+        }
+        let entry = response.session
+        return SessionSummary(
+            id: entry.id,
+            title: entry.title,
+            previewText: entry.previewText ?? "",
+            lastActivity: entry.updatedAt ?? .now,
+            source: entry.source,
+            isPinned: entry.isPinned ?? false,
+            isArchived: entry.isArchived ?? false
+        )
+    }
+
+    func loadConversation(id: UUID) async throws -> Conversation {
+        let response: ConversationResponse = try await performAuthorizedRequest { [self] token in
+            try await self.apiClient.get(
+                path: "sessions/\(id.uuidString.lowercased())/conversation",
+                accessToken: token
+            )
+        }
+        let conversation = mapConversation(response.conversation)
+        currentConversation = conversation
+        connectionStatus = .connected
+        return conversation
+    }
+}

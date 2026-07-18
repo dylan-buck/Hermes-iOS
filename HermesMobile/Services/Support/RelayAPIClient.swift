@@ -279,3 +279,30 @@ final class RelayAPIClient {
         return try decoder.decode(Envelope<T>.self, from: data).data
     }
 }
+
+// MARK: - DELETE and PATCH support
+
+extension RelayAPIClient {
+    func delete<T: Decodable>(
+        path: String,
+        accessToken: String? = nil
+    ) async throws -> T {
+        let request = try makeRequest(path: path, method: "DELETE", accessToken: accessToken, body: nil)
+        return try await send(request)
+    }
+
+    func patch<Body: Encodable, T: Decodable>(
+        path: String,
+        body: Body,
+        accessToken: String? = nil
+    ) async throws -> T {
+        let requestBody = try encoder.encode(body)
+        let request = try makeRequest(
+            path: path,
+            method: "PATCH",
+            accessToken: accessToken,
+            body: requestBody
+        )
+        return try await send(request)
+    }
+}
