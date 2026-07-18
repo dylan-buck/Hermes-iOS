@@ -1443,6 +1443,20 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         )
         db.commit()
 
+        # Create inbox item for each push sent
+        if sent > 0:
+            create_inbox_item(
+                db,
+                user_id=user_id,
+                device_id=None,
+                kind="notification",
+                title=payload.get("title", "Hermes"),
+                body=payload.get("body", "New message")[:200],
+                priority="normal",
+                payload={"conversationId": payload.get("conversationId")},
+                expires_at=None,
+            )
+            db.commit()
         return success({"sent": sent, "total": len(registrations)})
 
     @app.get("/v1/conversations/current")
