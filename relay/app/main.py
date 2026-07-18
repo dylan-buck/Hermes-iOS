@@ -322,6 +322,20 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             elif result != PushResult.SENT:
                 logger.warning("APNs delivery %s for device %s", result.value, device.id)
 
+        # Create inbox item so the app shows it in the inbox tab
+        create_inbox_item(
+            db,
+            user_id=user_id,
+            device_id=None,
+            kind="notification",
+            title="Hermes",
+            body=preview,
+            priority="normal",
+            payload={"conversationId": conversation_id, "messageId": message_id},
+            expires_at=None,
+        )
+        db.commit()
+
     def resolve_sensor_delivery(delivery_id: str | None, *, delivered: bool) -> None:
         if delivery_id is None:
             return
