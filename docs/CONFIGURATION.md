@@ -34,7 +34,8 @@ Tracked files should keep generic defaults. Real deployment values belong in loc
 | `CONNECTOR_JOB_LEASE_SECONDS` | Optional | Job lease duration |
 | `CONNECTOR_HEARTBEAT_TIMEOUT_SECONDS` | Optional | Host online/offline timeout |
 | `CONNECTOR_IDLE_POLL_INTERVAL_SECONDS` | Optional | Connector idle polling interval |
-| `CONNECTOR_SETUP_SECRET` | Optional | Bootstrap gate for new connectors |
+| `CONNECTOR_SETUP_SECRET` | Yes outside development/test | Bootstrap gate for new connectors; the relay refuses to start in production without it |
+| `ALLOW_OPEN_DEVICE_REGISTRATION` | Dev only | Enables unauthenticated `POST /v1/device/register` for local testing. Off by default; the relay refuses to start with it on outside development/test |
 
 ### Pairing and rate limits
 

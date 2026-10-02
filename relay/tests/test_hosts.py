@@ -12,7 +12,7 @@ from app.models import VoiceTurn
 from app.services import record_voice_turn
 
 
-def build_client(tmp_path):
+def build_client(tmp_path, **overrides):
     settings = Settings(
         environment="test",
         public_base_url="https://relay.example.test/v1",
@@ -29,6 +29,7 @@ def build_client(tmp_path):
         connector_job_lease_seconds=30,
         connector_heartbeat_timeout_seconds=5,
         connector_idle_poll_interval_seconds=0.1,
+        **overrides,
     )
     app = create_app(settings)
     return TestClient(app)
@@ -122,6 +123,24 @@ def test_connector_setup_and_phone_pairing_attach_phone_to_existing_user(tmp_pat
         )
         assert current_host.status_code == 200
         assert current_host.json()["data"]["host"]["id"] == connector_data["host"]["id"]
+
+
+def test_connector_setup_requires_matching_secret_when_configured(tmp_path):
+    with build_client(tmp_path, connector_setup_secret="correct-secret") as client:
+        missing = client.post("/v1/connector/setup", json=connector_setup_payload())
+        assert missing.status_code == 403
+
+        wrong = client.post(
+            "/v1/connector/setup",
+            json={**connector_setup_payload(), "installationSecret": "wrong"},
+        )
+        assert wrong.status_code == 403
+
+        ok = client.post(
+            "/v1/connector/setup",
+            json={**connector_setup_payload(), "installationSecret": "correct-secret"},
+        )
+        assert ok.status_code == 200
 
 
 def test_phone_pairing_rejects_reused_and_rate_limited_codes(tmp_path):

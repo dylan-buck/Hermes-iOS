@@ -13,7 +13,7 @@ def build_client(tmp_path, **overrides):
         public_base_url="http://testserver/v1",
         database_url=f"sqlite:///{tmp_path / 'relay.db'}",
         internal_api_key="test-internal-key",
-        **overrides,
+        **{"allow_open_device_registration": True, **overrides},
     )
     app = create_app(settings)
     return TestClient(app)
@@ -62,6 +62,43 @@ def test_device_register_session_and_refresh(tmp_path):
         )
         assert refresh_response.status_code == 200
         assert refresh_response.json()["data"]["accessToken"] != access_token
+
+
+def test_device_register_is_disabled_by_default(tmp_path):
+    with build_client(tmp_path, allow_open_device_registration=False) as client:
+        response = client.post(
+            "/v1/device/register",
+            json={
+                "device": {
+                    "platform": "ios",
+                    "deviceName": "Attacker",
+                    "appVersion": "1.0.0",
+                    "buildNumber": "1",
+                    "bundleId": "io.hermesmobile.HermesMobile",
+                    "installationId": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+                    "deviceModel": "iPhone17,2",
+                    "systemVersion": "26.4",
+                },
+                "client": {"environment": "production"},
+            },
+        )
+        assert response.status_code == 403
+
+
+def test_production_refuses_open_registration_and_missing_setup_secret(tmp_path):
+    import pytest
+
+    base = dict(
+        environment="production",
+        public_base_url="http://testserver/v1",
+        database_url=f"sqlite:///{tmp_path / 'relay.db'}",
+        internal_api_key="test-internal-key",
+    )
+    with pytest.raises(RuntimeError, match="CONNECTOR_SETUP_SECRET"):
+        create_app(Settings(**base))
+    with pytest.raises(RuntimeError, match="ALLOW_OPEN_DEVICE_REGISTRATION"):
+        create_app(Settings(**base, connector_setup_secret="s", allow_open_device_registration=True))
+    create_app(Settings(**base, connector_setup_secret="s"))
 
 
 def test_push_and_inbox_roundtrip(tmp_path):

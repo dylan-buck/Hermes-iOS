@@ -4,6 +4,7 @@ import asyncio
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
+import hmac
 import inspect
 import logging
 import uuid
@@ -155,6 +156,24 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         logger.warning(
             "SECURITY: INTERNAL_API_KEY is set to the default 'replace-me'. "
             "This is acceptable in development but must be changed for production."
+        )
+
+    if not settings.connector_setup_secret and settings.environment not in ("development", "test"):
+        raise RuntimeError(
+            "CONNECTOR_SETUP_SECRET is not set. Without it anyone can bootstrap a connector "
+            "account on this relay. Set a strong random value before running in production."
+        )
+
+    if settings.allow_open_device_registration:
+        if settings.environment not in ("development", "test"):
+            raise RuntimeError(
+                "ALLOW_OPEN_DEVICE_REGISTRATION is enabled outside development/test. "
+                "Open registration attaches any caller to the default user and mints tokens; "
+                "use phone pairing instead."
+            )
+        logger.warning(
+            "SECURITY: ALLOW_OPEN_DEVICE_REGISTRATION is enabled. "
+            "/v1/device/register is unauthenticated; never expose this relay publicly."
         )
 
     database = Database(settings.database_url)
@@ -540,9 +559,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         db: Session = Depends(get_db),
         request_settings: Settings = Depends(get_settings),
     ) -> dict:
-        # If a setup secret is configured, require it. Open access in dev when unset.
+        # If a setup secret is configured, require it. Open access in dev when unset
+        # (create_app refuses to start without one outside development/test).
         if request_settings.connector_setup_secret:
-            if payload.installationSecret != request_settings.connector_setup_secret:
+            if not hmac.compare_digest(
+                (payload.installationSecret or "").encode(),
+                request_settings.connector_setup_secret.encode(),
+            ):
                 raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid or missing installation secret.")
 
         user, host, connector_token = setup_connector_account(
@@ -729,6 +752,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         db: Session = Depends(get_db),
         request_settings: Settings = Depends(get_settings),
     ) -> dict:
+        # Unauthenticated: attaches the caller to the default user and mints tokens.
+        # Only for local development; real devices onboard via phone pairing.
+        if not request_settings.allow_open_device_registration:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Open device registration is disabled. Pair this device using a phone pairing code.",
+            )
         user = ensure_default_user(db, request_settings)
         device = upsert_device(
             db,

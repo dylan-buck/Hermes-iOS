@@ -49,13 +49,13 @@ export INTERNAL_API_KEY=replace-with-a-real-secret
 export HERMES_ADAPTER=connector
 ```
 
-Optional but recommended:
+Required outside development/test:
 
 ```bash
 export CONNECTOR_SETUP_SECRET=replace-with-a-bootstrap-secret
 ```
 
-If `CONNECTOR_SETUP_SECRET` is set, every connector must provide the same value during `hermes-mobile setup`.
+Every connector must provide the same value during `hermes-mobile setup`. The relay refuses to start in production without it.
 
 The full variable matrix lives in [../docs/CONFIGURATION.md](../docs/CONFIGURATION.md).
 
@@ -92,7 +92,7 @@ For public/self-hosted users, `connector` mode is the intended deployment model.
 - `GET /v1/session`
 - `POST /v1/auth/refresh`
 - `POST /v1/auth/revoke`
-- `POST /v1/device/register`
+- `POST /v1/device/register` (disabled unless `ALLOW_OPEN_DEVICE_REGISTRATION=true` in development/test; phones onboard via phone pairing)
 
 ### Pairing and hosts
 
@@ -130,7 +130,8 @@ For public/self-hosted users, `connector` mode is the intended deployment model.
 
 - Use HTTPS in any deployment the phone will reach over the internet.
 - Set a strong `INTERNAL_API_KEY`.
-- Set `CONNECTOR_SETUP_SECRET` if you do not want arbitrary connectors bootstrapping accounts on your relay.
+- Set `CONNECTOR_SETUP_SECRET` (required in production) so arbitrary connectors cannot bootstrap accounts on your relay.
+- Leave `ALLOW_OPEN_DEVICE_REGISTRATION` unset on any relay reachable from the internet.
 - Keep APNs secrets on the relay only, never on the connector.
 
 ## APNs and CarPlay

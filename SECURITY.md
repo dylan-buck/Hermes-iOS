@@ -5,7 +5,7 @@
 If you discover a security vulnerability in Hermes iOS, please report it responsibly:
 
 1. **Do not** open a public GitHub issue for security vulnerabilities
-2. Email security concerns to the maintainers directly
+2. Report privately through GitHub: [Security → Report a vulnerability](https://github.com/dylan-buck/Hermes-iOS/security/advisories/new)
 3. Include a description of the vulnerability, steps to reproduce, and potential impact
 
 We will acknowledge receipt within 48 hours and work with you on a fix.
@@ -17,7 +17,8 @@ We will acknowledge receipt within 48 hours and work with you on a fix.
 The relay is the only internet-facing component. It handles:
 
 - **Authentication:** Bearer token auth for iOS clients, connector credential for WebSocket
-- **CONNECTOR_SETUP_SECRET:** Optional shared secret that gates new connector registration. When set as an env var on the relay, the connector must provide the same value during `hermes-mobile setup`. Strongly recommended for production deployments.
+- **CONNECTOR_SETUP_SECRET:** Shared secret that gates new connector registration. The connector must provide the same value during `hermes-mobile setup`. Required outside development/test; the relay refuses to start without it.
+- **Device registration:** Phones onboard through single-use phone pairing codes. The legacy unauthenticated `POST /v1/device/register` endpoint is disabled unless `ALLOW_OPEN_DEVICE_REGISTRATION=true`, which is only accepted in development/test.
 - **INTERNAL_API_KEY:** Gates internal admin endpoints. Must be changed from the default `"replace-me"` in production — the relay logs a security warning if the default is used outside development.
 - **Token lifecycle:** Access tokens (1h default), refresh tokens (30d default), phone pairing codes (10min default) are all configurable via env vars.
 

@@ -58,7 +58,8 @@ hermes-mobile pair-phone
 - `DATABASE_URL`
 - `INTERNAL_API_KEY`
 - `HERMES_ADAPTER`
-- `CONNECTOR_SETUP_SECRET` (optional)
+- `CONNECTOR_SETUP_SECRET` (optional in development, required in production)
+- `ALLOW_OPEN_DEVICE_REGISTRATION` (development only; enables unauthenticated device registration)
 
 For realistic end-to-end local testing, prefer:
 
