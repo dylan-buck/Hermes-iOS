@@ -22,6 +22,11 @@
 	<string>1</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Hermes uses the camera to capture photos and documents for analysis.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 	<key>NSHealthShareUsageDescription</key>
 	<string>Hermes reads your health data to offer personalized wellness insights.</string>
 	<key>NSHealthUpdateUsageDescription</key>

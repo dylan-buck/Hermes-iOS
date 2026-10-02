@@ -78,6 +78,12 @@ targets:
         NSSpeechRecognitionUsageDescription: "Hermes uses speech recognition for voice commands and local transcription."
         NSSupportsLiveActivities: true
         NSSupportsLiveActivitiesFrequentUpdates: true
+        # Allow cleartext HTTP to local-network addresses (raw IPv4/IPv6 and
+        # .local). Required to reach a self-hosted relay over a LAN or
+        # ZeroTier address such as http://10.241.180.48:8000/v1.
+        # This is the targeted exception; NSAllowsArbitraryLoads is not used.
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
         UIBackgroundModes:
           - processing
           - location
