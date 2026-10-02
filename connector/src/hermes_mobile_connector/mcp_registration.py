@@ -45,12 +45,28 @@ def resolve_hermes_home() -> Path:
 
 
 def resolve_mcp_command_path() -> Path:
+    # Do NOT call .resolve() on sys.executable here: in a venv,
+    # .venv/bin/python is a symlink to the base interpreter (e.g.
+    # /opt/miniforge/bin/python3), so resolving it escapes the venv and
+    # looks for the console script in the base environment, where it does
+    # not exist. Keep the un-resolved path so the venv's own bin/ is used.
+    interpreter = Path(sys.executable)
+    if interpreter.is_symlink():
+        interpreter = interpreter.absolute()
+
     candidates = [
-        Path(sys.executable).resolve().with_name("hermes-mobile-mcp"),
+        interpreter.with_name("hermes-mobile-mcp"),
     ]
+    # Also consider the venv root that the interpreter lives in, which
+    # covers invocations where sys.executable points at the base python.
+    for parent in interpreter.parents:
+        if (parent / "pyvenv.cfg").exists():
+            candidates.append(parent / "bin" / "hermes-mobile-mcp")
+            break
+
     which_match = shutil.which("hermes-mobile-mcp")
     if which_match:
-        candidates.insert(0, Path(which_match).resolve())
+        candidates.insert(0, Path(which_match))
 
     for candidate in candidates:
         if candidate.exists():
