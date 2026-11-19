@@ -46,7 +46,9 @@ final class LiveSpeechService {
         }
 
         let status: SFSpeechRecognizerAuthorizationStatus = await withCheckedContinuation { continuation in
-            SFSpeechRecognizer.requestAuthorization { status in
+            // Called on a background queue: @Sendable keeps the closure from
+            // inheriting @MainActor, whose runtime isolation check would trap.
+            SFSpeechRecognizer.requestAuthorization { @Sendable status in
                 continuation.resume(returning: status)
             }
         }
