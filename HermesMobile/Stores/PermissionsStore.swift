@@ -118,11 +118,7 @@ final class PermissionsStore {
 
     private func requestMicrophoneAuthorization() async {
         guard AVAudioApplication.shared.recordPermission == .undetermined else { return }
-        await withCheckedContinuation { continuation in
-            AVAudioApplication.requestRecordPermission { _ in
-                continuation.resume()
-            }
-        }
+        _ = await AVAudioApplication.requestRecordPermission()
     }
 
     // MARK: - Speech Recognition
@@ -140,7 +136,10 @@ final class PermissionsStore {
     private func requestSpeechAuthorization() async {
         guard SFSpeechRecognizer.authorizationStatus() == .notDetermined else { return }
         await withCheckedContinuation { continuation in
-            SFSpeechRecognizer.requestAuthorization { _ in
+            // TCC calls this on a background queue. Without @Sendable the closure
+            // inherits this type's @MainActor isolation, and Swift 6's runtime
+            // isolation check traps when it runs.
+            SFSpeechRecognizer.requestAuthorization { @Sendable _ in
                 continuation.resume()
             }
         }
